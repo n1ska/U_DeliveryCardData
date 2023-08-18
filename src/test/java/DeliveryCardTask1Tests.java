@@ -3,22 +3,20 @@ import com.codeborne.selenide.Condition;
 import org.openqa.selenium.Keys;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import static com.codeborne.selenide.Selenide.*;
 
 public class DeliveryCardTask1Tests {
     @Test
-    public void SuccessTest()
+    public void successTest()
     {
-        var user = UserInfoUtils.GenerateUser(new Locale("ru"));
+        var user = UsersUtils.generateUser(new Locale("ru"));
 
         open("http://localhost:9999");
         var form = $(".form");
         form.$("[data-test-id=city] input").setValue(user.getCity());
-        String firstAppointment = generateDate(3, "dd.MM.yyyy");
+        String firstAppointment = DataGenerator.generateDate(3, "dd.MM.yyyy");
 
         form.$("[data-test-id=date] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
         form.$("[data-test-id=date] input").setValue(firstAppointment);
@@ -31,7 +29,7 @@ public class DeliveryCardTask1Tests {
                 .shouldHave(Condition.text("Встреча успешно запланирована на " + firstAppointment), Duration.ofSeconds(10))
                 .shouldBe(Condition.visible);
 
-        String secondAppointment = generateDate(6, "dd.MM.yyyy");
+        String secondAppointment = DataGenerator.generateDate(6, "dd.MM.yyyy");
         form.$("[data-test-id=date] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
         form.$("[data-test-id=date] input").setValue(secondAppointment);
         form.$(".form-field>button").click();
@@ -44,9 +42,5 @@ public class DeliveryCardTask1Tests {
         $("[data-test-id='success-notification'] > .notification__content")
                 .shouldHave(Condition.text("Встреча успешно запланирована на " + secondAppointment), Duration.ofSeconds(10))
                 .shouldBe(Condition.visible);
-    }
-
-    private String generateDate(int addDays, String pattern) {
-        return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
     }
 }
